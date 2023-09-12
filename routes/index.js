@@ -41,7 +41,7 @@ router.post("/users", async (req, res) => {
 
 //Supprimer un utilisateur
 router.delete("/users/:userId", async (req, res) => {
-  const { UserId } = req.params;
+  const { userId } = req.params;
 
   try {
     userFound = await user.findOne({ UserId: UserId });
@@ -50,7 +50,7 @@ router.delete("/users/:userId", async (req, res) => {
       res.status(404).json({ Message: "Utilisateur non trouvé" });
     }
 
-    await user.deleteOne({ UserId: UserId });
+    await user.deleteOne({ id: userId });
 
     res.json({ Message: "Utilisateur supprimer", User: userFound });
   } catch (error) {
@@ -64,12 +64,12 @@ router.delete("/users/:userId", async (req, res) => {
 
 //Trouver utilisateur
 router.get("/users/:userId", async (req, res) => {
-  const { UserId } = req.params;
+  const { userId } = req.params;
 
   try {
-    userFound = await user.findOne({ UserId: UserId });
+    userFound = await user.findOne({ id: userId });
 
-    if (userFound === null) {
+    if (userFound == null) {
       res.status(404).json({ Message: "Utilisateur non trouvé" });
     }
 
@@ -104,7 +104,7 @@ router.get("/users/:userId/movies", async (req, res) => {
 
   try {
 
-    userFound = await user.findOne({ UserId: userId });
+    userFound = await user.findOne({ id: userId });
 
     if (userFound == null) {
       res.status(404).json({ Message: "Utilisateur non trouvé" });
@@ -132,7 +132,7 @@ router.post("/users/:userId/movies", async (req, res) => {
   const { movie } = req.body;
 
   try {
-    userFound = await user.findOne({ UserId: userId });
+    userFound = await user.findOne({ id: userId });
 
     if (!userFound == null) {
       res.status(404).send("Utilisateur non trouvé");
@@ -156,11 +156,11 @@ router.post("/users/:userId/movies", async (req, res) => {
 
 //Retirer un film de la liste de films d'un utilisateur
 router.delete("/users/:userId/movies/:movieid", async (req, res) => {
-  const { UserId } = req.params;
+  const { userId } = req.params;
   const { movie } = req.params;
 
   try {
-    userFound = await user.findOne({ UserId: UserId });
+    userFound = await user.findOne({ id: userId });
 
     if (!userFound == null) {
       res.status(404).send("Utilisateur non trouvé");
@@ -184,7 +184,7 @@ router.delete("/user/:userId/remove-all-movies", async (req, res) => {
   const { userId } = req.params;
 
   try {
-    userFound = await user.findOne({ UserId: UserId });
+    userFound = await user.findOne({ id: userId });
 
     if (userFound == null) {
       res.status(404).send("Utilisateur non trouvé");
