@@ -99,7 +99,7 @@ router.get("/users", async (req, res) => {
 });
 
 //Trouver la liste de film d'un utilisateur
-router.get("/user/:userId/movies", async (req, res) => {
+router.get("/users/:userId/movies", async (req, res) => {
   const { userId } = req.params;
 
   try {
