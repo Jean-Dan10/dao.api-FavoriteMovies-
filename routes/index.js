@@ -44,7 +44,7 @@ router.delete("/users/:userId", async (req, res) => {
   const { userId } = req.params;
 
   try {
-    userFound = await user.findOne({ UserId: UserId });
+    userFound = await user.findOne({ id: userId });
 
     if (userFound == null) {
       res.status(404).json({ Message: "Utilisateur non trouvé" });
@@ -103,29 +103,28 @@ router.get("/users/:userId/movies", async (req, res) => {
   const { userId } = req.params;
 
   try {
-
-    userFound = await user.findOne({ id: userId });
+    const userFound = await user.findOne({ id: userId });
 
     if (userFound == null) {
-      res.status(404).json({ Message: "Utilisateur non trouvé" });
+      return res.status(404).json({ Message: "Utilisateur non trouvé" });
     }
 
-    const favoriteList = await user.findOne({ UserId: userId });
-    if (!favoriteList) {
-      res.status(404).send("Utilisateur non trouvé");
-    } else {
-      res.json(favoriteList.movies);
+    const favoriteList = userFound.movies;
+    if (!favoriteList || favoriteList.length === 0) {
+      return res.status(404).json({ Message: "Aucun film favori trouvé" });
     }
+
+    return res.json(favoriteList);
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
-      message: "Erreur lors de la recherche de l'utilisateur",
-      error: error.Message,
+      message: "Erreur lors de la recherche des films favoris de l'utilisateur",
+      error: error.message, // Use lowercase "message" for the error message
     });
   }
 });
 
-//À mmodifier
+
 //Ajouter un film dans la liste de film d'un utilisateur
 router.post("/users/:userId/movies", async (req, res) => {
   const { userId } = req.params;
@@ -134,7 +133,7 @@ router.post("/users/:userId/movies", async (req, res) => {
   try {
     userFound = await user.findOne({ id: userId });
 
-    if (!userFound == null) {
+    if (userFound == null) {
       res.status(404).send("Utilisateur non trouvé");
     }
     userFound.movies.push(movie);
@@ -180,17 +179,19 @@ router.delete("/users/:userId/movies/:movieid", async (req, res) => {
 });
 
 //vider la listeliste de films d'un utilisater
-router.delete("/user/:userId/remove-all-movies", async (req, res) => {
+router.delete("/users/:userId/movies", async (req, res) => {
   const { userId } = req.params;
 
   try {
     userFound = await user.findOne({ id: userId });
 
     if (userFound == null) {
-      res.status(404).send("Utilisateur non trouvé");
+      return res.status(404).send("Utilisateur non trouvé");
     }
 
-    await user.updateOne({ UserId: UserId }, { $set: { movies: [] } });
+    userFound.movies = [];
+    await userFound.save();
+
 
     res.status(200).json({ message: "La liste des favoris à été vidée" });
   } catch (error) {
