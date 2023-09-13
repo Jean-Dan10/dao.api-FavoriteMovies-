@@ -70,10 +70,10 @@ router.get("/users/:userId", async (req, res) => {
     userFound = await user.findOne({ id: userId });
 
     if (userFound == null) {
-      res.status(404).json({ Message: "Utilisateur non trouvé" });
+     return res.status(404).json({ Message: "Utilisateur non trouvé" });
     }
 
-    res.json(userFound);
+    return res.json(userFound);
   } catch (error) {
     res.status(500).json({
       success: false,
