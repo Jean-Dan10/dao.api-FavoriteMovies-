@@ -88,7 +88,7 @@ router.get("/users", async (req, res) => {
   try {
     const usersFound = await user.find();
 
-    res.json(usersFound);
+    res.json({userList:usersFound});
   } catch (error) {
     res.status(500).json({
       success: false,
