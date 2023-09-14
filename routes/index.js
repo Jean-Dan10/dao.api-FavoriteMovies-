@@ -196,28 +196,25 @@ router.delete("/users/:userId/movies/:movieId", async (req, res) => {
   const response = new APIResponse();
 
   try {
-    userFound = await userSchema.findOne({ id: userId });
-
-    if (userFound == null) {
-      response.success = false;
-      response.message = "User not found";
-      return res.status(404).json(response);
-    }
-
-    const movieIndex = userFound.movies.findIndex((movie) => movie.id === movieId);
-
-    if (movieIndex === -1) {
-      response.success = false;
-      response.message = "Movie not found in user's list";
-      return res.status(404).json(response);
-    }
-
     
-    userFound.movies.pull({ id: movieId });
+      const user = await User.findOneAndUpdate(
+        { id: userId },
+        {
+          $pull: { movies: { id: Number(movieId) } },
+        },
+        { new: true }
+      );
+  
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+     response.success= true
+     response.movieList = user.movies
+     response.message = "The movie has been successfully removed. "
 
-    await userFound.save();
 
-    return res.status(200).send(movie);
+    return res.status(200).json(response)
   } catch (error) {
     response.success = false;
     response.message = "Error when removing favorite movie";
@@ -229,7 +226,7 @@ router.delete("/users/:userId/movies/:movieId", async (req, res) => {
   }
 });
 
-//vider la listeliste de films d'un utilisater
+//vider la liste liste de films d'un utilisater
 router.delete("/users/:userId/movies", async (req, res) => {
   const { userId } = req.params;
   const response = new APIResponse();
@@ -252,9 +249,22 @@ router.delete("/users/:userId/movies", async (req, res) => {
   } catch (error) {
     response.success = false;
     response.message = "Error while clearing favorite movies";
-    response.error = error.message; // Use lowercase "message" for the error message
+    response.error = error.message; 
     return res.status(500).json(response);
   }
 });
+
+function errorResponse(res, message, statusCode = 500, error = null) {
+  const response = {
+    success: false,
+    message: message,
+  };
+
+  if (error) {
+    response.error = error.message;
+  }
+
+  return res.status(statusCode).json(response);
+}
 
 module.exports = router;
