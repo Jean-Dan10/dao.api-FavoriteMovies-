@@ -1,6 +1,7 @@
 var createError = require('http-errors');
 var express = require('express');
 var mongoose = require('mongoose');
+require('dotenv').config();
 
 
 
@@ -28,7 +29,8 @@ app.use('/analysis',analysisRouter)
 
 
 
-var mongoString = "mongodb+srv://admin:123@cluster0.ku8xczx.mongodb.net/MoviesDB"
+
+const mongoString = process.env.MONGODB_CONNECTION_STRING;
 
 mongoose.connect(mongoString);
 const database = mongoose.connection

@@ -6,6 +6,7 @@ class apiResponse {
     this.movie = null;
     this.message = "";
     this.success = true;
+    this.data = null
   }
 }
 
