@@ -5,7 +5,7 @@ const APIResponse = require("../models/apiResponse");
 
 const { response } = require("../app");
 
-router.get("/most-saved-movie", async (req, res) => {
+router.get("/movies/most-saved", async (req, res) => {
   const response = new APIResponse();
 
   try {
@@ -37,7 +37,7 @@ router.get("/most-saved-movie", async (req, res) => {
   }
 });
 
-router.get("/count-user", async (req, res) => {
+router.get("/users/total", async (req, res) => {
   const response = new APIResponse();
 
   try {
@@ -65,7 +65,7 @@ router.get("/count-user", async (req, res) => {
   }
 });
 
-router.get("/count-total-movie-saved", async (req, res) => {
+router.get("/movies/total-saved", async (req, res) => {
   const response = new APIResponse();
 
   try {
