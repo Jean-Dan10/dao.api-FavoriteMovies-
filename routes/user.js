@@ -19,13 +19,15 @@ router.post("/users", async (req, res) => {
 
     if (checkUser) {
       response.message = "Username already exists";
-
       return res.status(409).json(response);
     }
-    const User = { username: username, password: password, timestamp: dateTime }
+
+    const User = { username: username, password: password, timestamp: dateTime, movies: [] }
     const createdUser = await userSchema.create(User);
-    console.log(User);
+
     response.user = User;
+    console.log(response.user)
+
     response.message = "New user added";
     return res.status(201).json(response);
 
