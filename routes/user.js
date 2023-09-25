@@ -125,8 +125,8 @@ router.get("/users", async (req, res) => {
 });
 
 //Trouver la liste de film d'un utilisateur
-router.get("/users/::username/movies", async (req, res) => {
-  const { userId } = req.params;
+router.get("/users/:username/movies", async (req, res) => {
+  const { username } = req.params;
   const response = new APIResponse();
 
   try {
@@ -157,14 +157,14 @@ router.get("/users/::username/movies", async (req, res) => {
   }
 });
 //Ajouter un film dans la liste de film d'un utilisateur
-router.post("/users/:userId/movies", async (req, res) => {
-  const { userId } = req.params;
+router.post("/users/:username/movies", async (req, res) => {
+  const { username } = req.params;
   const { movie } = req.body;
 
   const response = new APIResponse();
 
   try {
-    userFound = await userSchema.findOne({ id: userId });
+    userFound = await userSchema.findOne({ username: { $regex: new RegExp(username, "i") } });
 
     if (userFound == null) {
       response.success = false;
@@ -188,15 +188,15 @@ router.post("/users/:userId/movies", async (req, res) => {
 });
 
 //Retirer un film de la liste de films d'un utilisateur
-router.delete("/users/:userId/movies/:movieId", async (req, res) => {
-  const { userId } = req.params;
+router.delete("/users/:username/movies/:movieId", async (req, res) => {
+  const { username } = req.params;
   const { movieId } = req.params;
 
   const response = new APIResponse();
 
   try {
     const user = await User.findOneAndUpdate(
-      { id: userId },
+      { username: { $regex: new RegExp(username, "i") } },
       {
         $pull: { movies: { id: Number(movieId) } },
       },
@@ -221,12 +221,12 @@ router.delete("/users/:userId/movies/:movieId", async (req, res) => {
 });
 
 //vider la liste de films d'un utilisater
-router.delete("/users/:userId/movies", async (req, res) => {
-  const { userId } = req.params;
+router.delete("/users/:username/movies", async (req, res) => {
+  const { username } = req.params;
   const response = new APIResponse();
 
   try {
-    const userFound = await userSchema.findOne({ id: userId });
+    const userFound = await userSchema.findOne({ username: { $regex: new RegExp(username, "i") } });
 
     if (userFound == null) {
       response.success = false;

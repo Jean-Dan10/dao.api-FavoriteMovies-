@@ -7,6 +7,7 @@ class apiResponse {
     this.message = "";
     this.success = true;
     this.data = null
+    this.error = ""
   }
 }
 
