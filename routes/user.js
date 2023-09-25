@@ -23,29 +23,13 @@ router.post("/users", async (req, res) => {
       return res.status(409).json(response);
     }
 
-    // Pour encrypter le mot de passe
-    plainPassword = User.password;
-    passwordAndPepper = plainPassword + process.env.SECRET_KEY;
+    await userSchema.create(User);
 
-    bcrypt.genSalt(10, async (err, salt) => {
-      try {
-        hash = await bcrypt.hash(passwordAndPepper, salt);
-
-        User.password = hash;
-
-        await userSchema.create(User);
-
-        response.user = User;
-       
-        response.message = "New user added";
-        return res.status(201).json(response);
-      } catch (error) {
-        
-        response.message = "Error adding user";
-        response.error = error.message;
-        return res.status(500).json(response);
-      }
-    });
+    response.user = User;
+   
+    response.message = "New user added";
+    return res.status(201).json(response);
+    
   } catch (error) {
 
     response.message = "Error adding user";
@@ -246,6 +230,13 @@ router.delete("/users/:username/movies", async (req, res) => {
     return res.status(500).json(response);
   }
 });
+
+router.get("/users/login", async (req, res) => {
+  // comparaison du hash
+
+  return render("")
+});
+
 
 function errorResponse(res, message, statusCode = 500, error = null) {
   const response = {
