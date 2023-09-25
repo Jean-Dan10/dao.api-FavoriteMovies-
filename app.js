@@ -1,6 +1,8 @@
 var createError = require('http-errors');
 var express = require('express');
+
 var mongoose = require('mongoose');
+require('dotenv').config();
 
 
 
@@ -8,7 +10,8 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
-var indexRouter = require('./routes/index');
+var userRouter = require('./routes/user');
+var analysisRouter = require('./routes/analysis');
 
 var app = express();
 
@@ -22,11 +25,13 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/v1/dao-api', indexRouter);
+app.use('/', userRouter);
+app.use('/analysis',analysisRouter)
 
 
 
-var mongoString = "mongodb+srv://admin:123@cluster0.ku8xczx.mongodb.net/MoviesDB"
+
+const mongoString = process.env.MONGODB_CONNECTION_STRING;
 
 mongoose.connect(mongoString);
 const database = mongoose.connection
