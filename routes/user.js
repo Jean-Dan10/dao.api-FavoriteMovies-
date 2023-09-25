@@ -1,13 +1,13 @@
 const express = require("express");
 const router = express.Router();
-const userSchema = require("../models/favoriteMovie");
+const userSchema = require("../models/user");
 const APIResponse = require("../models/apiResponse");
 const bcrypt = require("bcrypt");
 
 require("dotenv").config();
 
 const { route, response } = require("../app");
-const User = require("../models/favoriteMovie");
+const User = require("../models/user");
 
 router.post("/users", async (req, res) => {
   const { User } = req.body;
