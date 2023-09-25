@@ -2,18 +2,20 @@ const express = require("express");
 const router = express.Router();
 const userSchema = require("../models/favoriteMovie");
 const APIResponse = require("../models/apiResponse");
+const bcrypt = require("bcrypt");
+
+require("dotenv").config();
 
 const { route, response } = require("../app");
 const User = require("../models/favoriteMovie");
 
-//Ajouter un utilisateur
 router.post("/users", async (req, res) => {
   const { User } = req.body;
 
   const response = new APIResponse();
 
   try {
-    checkUser = await userSchema.findOne({ id: User.id });
+    checkUser = await userSchema.findOne({ username: User.username });
 
     if (checkUser) {
       response.message = "User already exists";
@@ -21,11 +23,29 @@ router.post("/users", async (req, res) => {
       return res.status(409).json(response);
     }
 
-    await userSchema.create(User);
-    response.user = User;
-    response.success = true;
-    response.message = "New user added";
-    return res.status(201).json(response);
+    // Pour encrypter le mot de passe
+    plainPassword = User.password;
+    passwordAndPepper = plainPassword + process.env.SECRET_KEY;
+
+    bcrypt.genSalt(10, async (err, salt) => {
+      try {
+        hash = await bcrypt.hash(passwordAndPepper, salt);
+
+        User.password = hash;
+
+        await userSchema.create(User);
+
+        response.user = User;
+        response.success = true;
+        response.message = "New user added";
+        return res.status(201).json(response);
+      } catch (error) {
+        response.success = false;
+        response.message = "Error adding user";
+        response.error = error.message;
+        return res.status(500).json(response);
+      }
+    });
   } catch (error) {
     response.success = false;
     response.message = "Error adding user";
@@ -35,20 +55,20 @@ router.post("/users", async (req, res) => {
 });
 
 //Supprimer un utilisateur
-router.delete("/users/:userId", async (req, res) => {
-  const { userId } = req.params;
+router.delete("/users/:username", async (req, res) => {
+  const { username } = req.params;
 
   const response = new APIResponse();
 
   try {
-    const userFound = await userSchema.findOne({ id: userId });
+    const userFound = await userSchema.findOne({ username: { $regex: new RegExp(username, "i") } });
 
     if (userFound == null) {
       response.success = false;
       response.message = "User not found";
       return res.status(404).json(response);
     } else {
-      await userSchema.deleteOne({ id: userId });
+      await userSchema.deleteOne({ _id: userFound._id });
       response.success = true;
       response.message = "User deleted";
       response.user = userFound;
@@ -64,12 +84,12 @@ router.delete("/users/:userId", async (req, res) => {
 });
 
 //Trouver utilisateur
-router.get("/users/:userId", async (req, res) => {
-  const { userId } = req.params;
+router.get("/users/:username", async (req, res) => {
+  const { username } = req.params;
   const response = new APIResponse();
 
   try {
-    const userFound = await userSchema.findOne({ id: userId });
+    const userFound = await userSchema.findOne({ username: { $regex: new RegExp(username, "i") } });
 
     if (userFound == null) {
       response.success = false;
@@ -105,12 +125,12 @@ router.get("/users", async (req, res) => {
 });
 
 //Trouver la liste de film d'un utilisateur
-router.get("/users/:userId/movies", async (req, res) => {
+router.get("/users/::username/movies", async (req, res) => {
   const { userId } = req.params;
   const response = new APIResponse();
 
   try {
-    const userFound = await userSchema.findOne({ id: userId });
+    const userFound = await userSchema.findOne({ username: { $regex: new RegExp(username, "i") } });
 
     if (userFound == null) {
       response.success = false;

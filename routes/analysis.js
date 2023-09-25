@@ -94,36 +94,5 @@ router.get("/movies/total-saved", async (req, res) => {
 });
 module.exports = router;
 
-router.get("/average-movie-by-list", async (req, res) => {
-  const response = new APIResponse();
 
-  try {
-    const pipeline = [
-      {
-        $group: {
-          _id: null,
-          totalMovies: { $sum: { $size: "$movies" } },
-          count: { $sum: 1 },
-        },
-      },
-      {
-        $project: {
-          _id: 0,
-          globalAverageMovies: { $divide: ["$totalMovies", "$count"] },
-        },
-      },
-    ];
-    const data = await userSchema.aggregate(pipeline);
 
-    response.data = data[0];
-    response.success = true;
-    response.message = "Average movie by list";
-    return res.status(200).json(response);
-  } catch (error) {
-    response.success = false;
-    response.message = "Error retrieving data";
-    response.error = error.message;
-    return res.status(500).json(response);
-  }
-});
-module.exports = router;

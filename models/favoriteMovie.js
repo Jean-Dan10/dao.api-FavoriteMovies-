@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const movieSchema = new mongoose.Schema({
   id: Number,
@@ -6,19 +6,18 @@ const movieSchema = new mongoose.Schema({
   backdropPath: String,
   popularity: Number,
   posterPath: String,
-  title: String
-  
+  title: String,
 });
 
+const userSchema = new mongoose.Schema(
+  {
+    username: { type: String, unique: true, require: true },
+    password: { type: String, require: true },
+    movies: [movieSchema],
+  },
+  { collection: "UserFavoriteMovies" }
+);
 
-const userSchema = new mongoose.Schema({
-  id: Number,
-  username: String,
-  password: String, 
-  movies: [movieSchema],
-},{ collection: 'UserFavoriteMovies' }); 
-
-const User = mongoose.model('UserFavoriteMovies', userSchema);
+const User = mongoose.model("UserFavoriteMovies", userSchema);
 
 module.exports = User;
-
