@@ -16,7 +16,7 @@ router.get("/movies/most-saved", async (req, res) => {
           _id: "$movies.id",
           title: { $first: "$movies.title" },
           total: { $sum: 1 },
-          posterPath: { $first: "$movies.posterPath" },
+          posterPath: { $first: "$movies.poster_path" },
         },
       },
       { $sort: { total: -1 } },

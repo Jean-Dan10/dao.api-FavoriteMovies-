@@ -10,26 +10,25 @@ const { route, response } = require("../app");
 const User = require("../models/favoriteMovie");
 
 router.post("/users", async (req, res) => {
-  const { User } = req.body;
-
+  const {  username, password, timestamp } = req.body;
   const response = new APIResponse();
+  const dateTime = new Date(timestamp);
 
   try {
-    checkUser = await userSchema.findOne({ username: User.username });
+    checkUser = await userSchema.findOne({ username: username });
 
     if (checkUser) {
-      response.message = "User already exists";
-      
+      response.message = "Username already exists";
+
       return res.status(409).json(response);
     }
-
-    await userSchema.create(User);
-
+    const User = { username: username, password: password, timestamp: dateTime }
+    const createdUser = await userSchema.create(User);
+    console.log(User);
     response.user = User;
-   
     response.message = "New user added";
     return res.status(201).json(response);
-    
+
   } catch (error) {
 
     response.message = "Error adding user";
@@ -48,19 +47,19 @@ router.delete("/users/:username", async (req, res) => {
     const userFound = await userSchema.findOne({ username: { $regex: new RegExp(username, "i") } });
 
     if (userFound == null) {
-      
+
       response.message = "User not found";
       return res.status(404).json(response);
     } else {
-      await userSchema.deleteOne({username: { $regex: new RegExp(username, "i") } });
-      
+      await userSchema.deleteOne({ username: { $regex: new RegExp(username, "i") } });
+
       response.message = "User deleted";
       response.user = userFound;
 
       return res.status(200).json(response);
     }
   } catch (error) {
-    
+
     response.message = "Error deleting user";
     response.error = error.message;
     return res.status(500).json(response);
@@ -76,16 +75,16 @@ router.get("/users/:username", async (req, res) => {
     const userFound = await userSchema.findOne({ username: { $regex: new RegExp(username, "i") } });
 
     if (userFound == null) {
- 
+
       response.message = "User not found";
       return res.status(404).json(response);
     } else {
-    
+
       response.user = userFound;
       return res.status(200).json(response);
     }
   } catch (error) {
-   
+
     response.message = "Error searching for user";
     response.error = error.message;
     return res.status(500).json(response);
@@ -125,7 +124,7 @@ router.get("/users/:username/movies", async (req, res) => {
     const favoriteList = userFound.movies;
 
     if (!favoriteList || favoriteList.length == 0) {
-  
+
       response.message = "No movies found";
       return res.status(404).json(response);
     }
@@ -151,7 +150,7 @@ router.post("/users/:username/movies", async (req, res) => {
     userFound = await userSchema.findOne({ username: { $regex: new RegExp(username, "i") } });
 
     if (userFound == null) {
-  
+
       response.message = "User not found";
       return res.status(404).json(response);
     }
