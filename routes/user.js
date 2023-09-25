@@ -141,10 +141,11 @@ router.get("/users/:username/movies", async (req, res) => {
     return res.status(500).json(response);
   }
 });
+
 //Ajouter un film dans la liste de film d'un utilisateur
 router.post("/users/:username/movies", async (req, res) => {
   const { username } = req.params;
-  const { movie } = req.body;
+  const movie = req.body
 
   const response = new APIResponse();
 
@@ -152,16 +153,15 @@ router.post("/users/:username/movies", async (req, res) => {
     userFound = await userSchema.findOne({ username: { $regex: new RegExp(username, "i") } });
 
     if (userFound == null) {
-
       response.message = "User not found";
       return res.status(404).json(response);
     }
+    
     userFound.movies.push(movie);
-
-    await userFound.save();
-
     response.message = "movie added";
     response.movie = movie;
+    await userFound.save();
+
     return res.status(200).json(response);
   } catch (error) {
 
