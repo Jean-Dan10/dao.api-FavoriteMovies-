@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const userSchema = require("../models/favoriteMovie");
+const userSchema = require("../models/user");
 const APIResponse = require("../models/apiResponse");
 
 const { response } = require("../app");
