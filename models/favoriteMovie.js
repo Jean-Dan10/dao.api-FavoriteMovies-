@@ -11,6 +11,8 @@ const movieSchema = new mongoose.Schema({
 
 const userSchema = new mongoose.Schema(
   {
+    
+    timestamp: {type:String, require:true} ,
     username: { type: String, unique: true, require: true },
     password: { type: String, require: true },
     movies: [movieSchema],

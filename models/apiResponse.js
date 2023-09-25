@@ -5,9 +5,8 @@ class apiResponse {
     this.user = null;
     this.movie = null;
     this.message = "";
-    this.success = true;
-    this.data = null
-    this.error = ""
+    this.data = null;
+    this.error = "";
   }
 }
 

@@ -26,11 +26,11 @@ router.get("/movies/most-saved", async (req, res) => {
      
 
     response.data = data;
-    response.success = true;
+
     response.message = "Top movie in favorite list";
     return res.status(200).json(response);
   } catch (error) {
-    response.success = false;
+
     response.message = "Error retrieving data";
     response.error = error.message;
     return res.status(500).json(response);
@@ -54,11 +54,11 @@ router.get("/users/total", async (req, res) => {
     const data = await userSchema.aggregate(pipeline);
 
     response.data = data[0];
-    response.success = true;
+
     response.message = "Number of users";
     return res.status(200).json(response);
   } catch (error) {
-    response.success = false;
+
     response.message = "Error retrieving data";
     response.error = error.message;
     return res.status(500).json(response);
@@ -82,11 +82,11 @@ router.get("/movies/total-saved", async (req, res) => {
     const data = await userSchema.aggregate(pipeline);
 
     response.data = data[0];
-    response.success = true;
+
     response.message = "Number of movies saved";
     return res.status(200).json(response);
   } catch (error) {
-    response.success = false;
+
     response.message = "Error retrieving data";
     response.error = error.message;
     return res.status(500).json(response);
